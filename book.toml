@@ -1,0 +1,19 @@
+[book]
+title = "AI Technical Reference"
+authors = ["jahboukie"]
+language = "en"
+description = "A curated personal knowledge base on LLM internals, neural network architecture, and AI governance technical concepts — built for a Certified AI Governance Professional."
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+default-theme = "navy"
+preferred-dark-theme = "navy"
+git-repository-url = ""
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
+no-section-label = false
+
+[output.html.search]
+enable = true
+limit-results = 30

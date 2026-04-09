@@ -1,0 +1,11 @@
+[package]
+name = "ai-technical-reference"
+version = "0.1.0"
+edition = "2021"
+description = "Desktop viewer for the AI Technical Reference book"
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
