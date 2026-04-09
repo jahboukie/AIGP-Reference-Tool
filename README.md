@@ -1,192 +1,104 @@
-# GRC Command Center
+# AI Technical Reference
 
-**Personal AI Governance, Risk & Compliance platform built by a Certified AI Governance Professional.**
+**A curated personal knowledge base on LLM internals, neural network architecture, and AI governance technical concepts — built by a Certified AI Governance Professional.**
 
-A local-first desktop application designed to systematically manage AI governance engagements, track compliance across five international regulatory frameworks, assess risks, maintain auditable evidence, and generate compliance reports — replacing ad-hoc spreadsheets with a purpose-built engineering solution.
+A desktop reference book that bridges the gap between ML engineering and AI governance. Every chapter connects technical concepts (attention mechanisms, RLHF, tokenisation) to specific regulatory requirements (EU AI Act articles, ISO 42001 controls, NIST AI RMF measures) — so a governance professional can speak the language of the engineers and vice versa.
 
 ---
 
 ## Why This Exists
 
-An AI governance professional managing multiple client engagements cannot rely on memory or scattered documents to track hundreds of specific legal requirements across overlapping regulatory frameworks. The EU AI Act alone contains 83+ distinct obligations that vary by risk tier and supply-chain role. Multiply that across ISO 42001, ISO 23894, NIST AI RMF, and the OECD AI Principles — then across multiple clients, each with different AI systems and risk profiles — and the cognitive load becomes unmanageable without tooling.
-
-This application externalizes that cognitive load into a structured, auditable system. Every assessment decision, every status change, every piece of evidence is logged with an immutable audit trail. When a regulator or client asks "show me your diligence," the answer is the export from this tool.
+An AI Governance Professional needs to understand **what's under the hood** — not at researcher depth, but enough to assess risks, review model cards, evaluate benchmarks, and hold informed conversations with ML engineers. Commercial courses cover policy; this tool covers the technical substrate that policy regulates.
 
 ---
 
-## Frameworks Covered
+## What's Inside
 
-| Framework | Identifier | Seeded Requirements |
-|-----------|-----------|:-------------------:|
-| **EU AI Act** | Regulation (EU) 2024/1689 | ~83 |
-| **ISO/IEC 42001** | AI Management System (2023) | ~50 |
-| **ISO/IEC 23894** | AI Risk Management (2023) | ~40 |
-| **NIST AI RMF** | AI Risk Management Framework 1.0 | ~45 |
-| **OECD AI Principles** | Recommendation of the Council on AI (2019/2024) | ~23 |
+**36 chapters across 6 parts**, each with Mermaid diagrams, comparison tables, and a Governance Relevance callout linking concepts to specific regulatory citations.
 
-**241 requirements** seeded from primary regulatory sources, with **cross-reference mappings** showing where frameworks overlap (e.g., EU AI Act Article 9 ↔ ISO 23894 Clause 6 ↔ NIST GOVERN-1).
-
----
-
-## Core Capabilities
-
-### Engagement & AI System Management
-Track multiple client engagements, each scoped by industry sector, jurisdiction, obligation role, AI use case, and data profile. Register AI systems per engagement with EU AI Act risk classification (Unacceptable / High / Limited / Minimal / GPAI). Intake forms auto-suggest applicable frameworks based on scoping inputs.
-
-### Framework Requirement Navigator
-Browse all 241 requirements grouped by category, filterable by framework, risk tier, category, and free-text search. Select an engagement's AI system, then assess each requirement inline — recording compliance status (Met / Partial / Gap / N/A), assessor notes, remediation plans, and target dates.
-
-### Cross-Framework Reference Map
-Visualize how requirements map across frameworks. Filter by relationship type (equivalent, overlapping, supporting, partial). When an AI system is selected, each cross-referenced requirement shows its current assessment status — revealing which compliance work transfers across frameworks.
-
-### Fundamental Rights Impact Assessment (FRIA)
-Structured FRIA workflow aligned with EU AI Act Article 27, covering affected groups, impact severity ratings, mitigation measures, and proportionality assessments. Full lifecycle from draft through review to final approval.
-
-### Risk Matrix
-5×5 risk heat map (Likelihood × Impact) with inherent and residual risk scoring. Register risks linked to specific AI systems, categories, and requirements. Visual placement on the matrix for at-a-glance portfolio risk posture.
-
-### Evidence Vault
-Central repository of compliance artifacts. Upload evidence and link it to specific requirements, risks, or tasks. Track evidence type (policy, technical report, test result, training record, etc.) and acceptance status. Evidence connections propagate through the assessment layer.
-
-### Task Management
-Create, prioritize, and track compliance tasks within each engagement. Inline status and priority controls. Tasks link to specific AI systems, frameworks, and requirements for full traceability.
-
-### Compliance Reports
-Generate HTML reports from structured data:
-- **Compliance Report** — per-system assessment summary across all applicable requirements
-- **Gap Analysis Report** — focused view of unmet requirements with remediation timelines
-- **Risk Report** — risk register with matrix visualization and mitigation status
-
-Reports render server-side via Askama templates, written to local filesystem, and opened in the default browser.
-
-### LLM Regulatory Assistant
-Built-in conversational assistant for regulatory research. Supports three provider backends:
-- **OpenAI** (GPT-4o, GPT-4 Turbo)
-- **Anthropic** (Claude 3.5 Sonnet, Claude 3 Opus)
-- **Ollama** (local models, fully offline)
-
-API keys encrypted at rest using AES-256-GCM. Conversation history persisted. The assistant does not make compliance decisions — it assists with regulatory interpretation and drafting.
-
-### Immutable Audit Trail
-Every entity mutation writes to an append-only `audit_log` table. PostgreSQL triggers prevent UPDATE and DELETE on audit records. The trail captures entity type, action, field changed, old value, new value, and timestamp. Fully searchable and filterable by entity, action type, and date range.
-
-### Dashboard
-At-a-glance metrics: total engagements, active AI systems, compliance posture breakdown, priority tasks, and recent audit activity.
+| Part | Chapters | Coverage |
+|------|:--------:|----------|
+| **I. Neural Network Foundations** | 1–4 | Neurons, training loop, loss functions, optimizers, history from perceptrons to transformers |
+| **II. Transformer Architecture** | 5–11 | Attention, multi-head attention, positional encoding, layer norm, FFNs, tokenisation, encoder/decoder architectures |
+| **III. Large Language Models** | 12–20 | Pre-training, fine-tuning, RLHF, inference, context windows, hallucination, emergent capabilities, prompt engineering, RAG |
+| **IV. Technical Governance Concepts** | 21–29 | Model cards, weights & parameters, bias & fairness, explainability, benchmarks, AI system vs model, training data, red-teaming, guardrails |
+| **V. Regulatory Deep-Dives** | 30–34 | EU AI Act high-risk requirements, GPAI obligations, ISO 42001 controls, NIST Measure function, cross-framework comparison |
+| **VI. Professional Reference** | 35–36 | How to read ML research papers, A–Z glossary |
 
 ---
 
-## Technical Architecture
+## Regulatory Frameworks Referenced
 
-```
-Leptos (WASM) → tauri::invoke() → Tauri Commands (Rust) → SQLx → PostgreSQL
-```
+Every governance callout cites specific provisions from:
 
-| Layer | Technology | Rationale |
-|-------|-----------|-----------|
-| Desktop Shell | **Tauri 2** | Native window, ~10 MB binary (vs ~150 MB Electron), Rust-native IPC |
-| Frontend | **Leptos** (CSR → WASM) | Reactive UI in Rust, compiles via `trunk`, zero npm |
-| Backend | **Rust** (44 Tauri commands) | Type-safe, async, shared types across IPC boundary |
-| Database | **PostgreSQL 16+** | Complex queries, JSON arrays, immutable audit triggers |
-| DB Driver | **SQLx** | Async, compile-time checked queries |
-| Reports | **Askama** | Compile-time HTML template verification |
-| Styling | **Pico CSS** (vendored) | Classless semantic defaults, no build pipeline |
-| Encryption | **AES-256-GCM** | API key encryption at rest |
-| HTTP | **reqwest** | LLM provider API calls |
-
-**Zero npm. Zero Node.js. The entire application is Rust, compiled through `cargo` and `trunk`.**
-
-### Project Structure
-
-```
-grc-tool/
-├── shared/            # Shared types crate — 20 enums, 36 structs
-│   └── src/           #   used by both frontend and backend
-├── src-tauri/         # Tauri backend
-│   ├── migrations/    #   5 SQL migrations (schema + 241 seeded requirements)
-│   ├── src/
-│   │   ├── commands/  #   13 command modules (44 IPC commands)
-│   │   ├── models/    #   Data access layer (SQLx queries)
-│   │   ├── reports/   #   Askama report generation
-│   │   └── llm/       #   Multi-provider LLM client
-│   └── templates/     #   HTML report templates
-├── frontend/          # Leptos WASM frontend
-│   └── src/
-│       ├── pages/     #   15 page components
-│       ├── components/#   12 reusable UI components
-│       └── api/       #   Tauri invoke wrappers
-└── references/        # Primary regulatory source material
-```
-
-**~9,600 lines of Rust** | **~800 lines of SQL** | **44 backend commands** | **15 pages** | **12 components**
+- **EU AI Act** — Articles 9–15 (high-risk), Articles 53 & 55 (GPAI), Annexes IV & XI
+- **ISO/IEC 42001:2023** — Annex A control areas A.2–A.10
+- **NIST AI RMF 1.0** — GOVERN, MAP, MEASURE, MANAGE functions and subcategories
+- **ISO/IEC 23894:2023** — AI risk management guidance
 
 ---
 
-## Data Model Highlights
+## Technical Stack
 
-The system is designed **data-structures-first** (Rob Pike Rule 5 — if you get the data structures right, the rest falls into place). Key design decisions:
+| Component | Technology |
+|-----------|-----------|
+| Book engine | **mdBook** (Rust-native Markdown → HTML) |
+| Diagrams | **mdbook-mermaid** (inline Mermaid rendering) |
+| Desktop wrapper | **Tauri 2** (standalone .exe, no browser required) |
+| Theme | Navy, full-text search enabled |
 
-- **All primary keys are UUID v4** — no sequential IDs, no collision risk across environments
-- **All timestamps UTC** via `chrono` — unambiguous temporal ordering
-- **Enums are PascalCase in Rust, snake_case in PostgreSQL** — `serde(rename_all)` bridges both
-- **Shared crate** ensures frontend and backend always agree on types across the IPC boundary
-- **Framework requirements are seed data in migrations, not hardcoded in Rust** — adding a regulation means adding a migration, not modifying application code
-- **Cross-references stored relationally** with typed relationships (equivalent, overlapping, supporting, partial)
-- **Audit log is append-only** — PostgreSQL triggers reject any UPDATE or DELETE attempt
+**Zero npm. Zero Node.js. Pure Rust toolchain.**
+
+---
+
+## Project Structure
+
+```
+mdBook-tool/
+├── book.toml              # mdBook configuration
+├── src/
+│   ├── SUMMARY.md         # Table of contents (drives sidebar)
+│   ├── introduction.md    # Landing page
+│   ├── part1_foundations/  # Chapters 1–4
+│   ├── part2_transformers/ # Chapters 5–11
+│   ├── part3_llm/          # Chapters 12–20
+│   ├── part4_governance/   # Chapters 21–29
+│   ├── part5_regulatory/   # Chapters 30–34
+│   └── part6_reference/    # Chapters 35–36
+├── src-tauri/             # Tauri 2 desktop shell
+│   ├── src/main.rs        # Entry point (5 lines)
+│   ├── tauri.conf.json    # Window config, build hooks
+│   └── icons/             # App icons (all platforms)
+├── reference-docs/        # Primary regulatory source texts
+└── book/                  # Built HTML output (gitignored)
+```
 
 ---
 
 ## Build & Run
 
-**Prerequisites:** Rust stable toolchain, PostgreSQL 16+, `trunk` (`cargo install trunk`)
+**Prerequisites:** Rust stable toolchain, `mdbook`, `mdbook-mermaid`
 
 ```bash
-# Create database
-sqlx database create
+# Install tools (one-time)
+cargo install mdbook mdbook-mermaid
 
-# Run migrations (schema + seed data)
-sqlx migrate run
+# Build the book (HTML output in book/)
+mdbook build
 
-# Development mode (hot-reload frontend + backend)
-cargo tauri dev
+# Serve locally with hot-reload
+mdbook serve --open
 
-# Production build
+# Build standalone desktop .exe
 cargo tauri build
 ```
 
----
-
-## Design Decisions
-
-**Why build a custom tool instead of using existing GRC platforms?**
-
-Commercial GRC platforms (ServiceNow, OneTrust, Archer) are designed for enterprise teams with dedicated IT staff. They require cloud subscriptions, lengthy onboarding, and impose workflow assumptions that don't match a solo practitioner's needs. This tool is purpose-built for one user who needs to move fast across multiple frameworks without platform overhead.
-
-**Why Rust end-to-end?**
-
-A single language across the entire stack eliminates serialization mismatches, type disagreements, and npm supply-chain risk. The shared types crate guarantees that if the backend compiles, the frontend's expectations are satisfied. This is particularly important for a compliance tool where data integrity is non-negotiable.
-
-**Why local-first with PostgreSQL?**
-
-Client engagement data is sensitive. A local-first architecture means no cloud dependency, no data residency questions, and no third-party access. PostgreSQL was chosen over SQLite because the user already manages a local pgAdmin4 instance, and PostgreSQL's trigger system enables the immutable audit trail.
-
-**Why an immutable audit trail?**
-
-Professional diligence is demonstrable or it isn't. When a client or regulator asks "when did you assess this requirement, and what was the result?", the answer needs to be tamper-evident. The append-only audit log with database-enforced immutability provides that guarantee.
-
----
-
-## Status
-
-All planned features are implemented and compile. The application covers the full engagement lifecycle: intake → scoping → framework selection → requirement assessment → risk scoring → evidence management → task tracking → report generation — with an immutable audit trail across every step.
+The built installer is at `src-tauri/target/release/bundle/nsis/AI Technical Reference_0.1.0_x64-setup.exe`.
 
 ---
 
 ## Author
 
-Built as a personal professional tool by a **Certified AI Governance Professional (CAIGP)** to support hands-on regulatory compliance work across the EU AI Act, ISO/IEC 42001, ISO/IEC 23894, NIST AI RMF, and OECD AI Principles.
+Built as a personal professional reference tool by a **Certified AI Governance Professional (CAIGP)** to support technical fluency in LLM internals, neural network architecture, and the regulatory frameworks that govern them.
 
----
-
-## License
-
-Private repository. Not open-source.
+Companion tool to the [GRC Command Centre](https://github.com/jahboukie) — together they cover both the operational compliance workflow and the technical knowledge base.
